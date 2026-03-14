@@ -9,7 +9,9 @@
 ## Directory Layout
 
 ```
-.tmp/              # Temporary processing files — disposable, regenerated as needed
+README.md          # Project overview (Phantomclaw)
+WAT_FRAMEWORK.md   # Technical framework documentation (This file)
+.tmp/              # Temporary processing files — ephemeral
 tools/             # Python scripts for deterministic execution
 workflows/         # Markdown SOPs (standard operating procedures)
 _agents/           # Agent config and agent-facing workflows

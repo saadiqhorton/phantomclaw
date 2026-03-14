@@ -28,6 +28,16 @@ A powerful, multi-modal gateway to your workspace.
 - **Command Control**: Handle `/watch`, `/trending`, and file uploads seamlessly.
 - *Managed via: `tools/telegram_opencode_bridge.py`*
 
+## Directory Layout
+
+```
+README.md          # Project overview (This file)
+WAT_FRAMEWORK.md   # Technical framework documentation
+tools/             # Core functionality (TLDR, Lobster, Telegram)
+workflows/         # Step-by-step agent instructions
+_agents/           # Agent-specific configurations
+```
+
 ## Architecture
 
 Phantomclaw leverages the **WAT (Workflows, Agents, Tools)** architecture:
