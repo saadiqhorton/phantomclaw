@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+# Telegram-OpenCode Bridge manager
+# Usage: ./tools/bridge [start|stop|status|logs|attach]
+DIR="$(cd "$(dirname "$0")/.." && pwd)"
+SESSION="bridge"
+
+case "${1:-start}" in
+  start)
+    if tmux has-session -t "$SESSION" 2>/dev/null; then
+      echo "⚠️  Bridge is already running. Use: ./tools/bridge attach"
+      exit 1
+    fi
+    pkill -f telegram_opencode_bridge 2>/dev/null
+    sleep 1
+    tmux new-session -d -s "$SESSION" "while true; do python3 '$DIR/tools/telegram_opencode_bridge.py'; echo '⚠️  Crashed. Restarting in 5s...'; sleep 5; done"
+    echo "✅ Bridge started in background. Commands:"
+    echo "   ./tools/bridge attach  — view live output"
+    echo "   ./tools/bridge status  — check if running"
+    echo "   ./tools/bridge stop    — shut it down"
+    echo "   ./tools/bridge logs    — peek at output"
+    ;;
+  stop)
+    tmux kill-session -t "$SESSION" 2>/dev/null
+    pkill -f telegram_opencode_bridge 2>/dev/null
+    echo "🛑 Bridge stopped."
+    ;;
+  status)
+    if tmux has-session -t "$SESSION" 2>/dev/null; then
+      echo "🟢 Bridge is running."
+    else
+      echo "🔴 Bridge is not running."
+    fi
+    ;;
+  attach)
+    if tmux has-session -t "$SESSION" 2>/dev/null; then
+      echo "Attaching... (press Ctrl+B then D to detach)"
+      tmux attach -t "$SESSION"
+    else
+      echo "🔴 Bridge is not running. Start it with: ./tools/bridge start"
+    fi
+    ;;
+  logs)
+    if tmux has-session -t "$SESSION" 2>/dev/null; then
+      tmux capture-pane -t "$SESSION" -p | tail -30
+    else
+      echo "🔴 Bridge is not running."
+    fi
+    ;;
+  *)
+    echo "Usage: ./tools/bridge [start|stop|status|logs|attach]"
+    ;;
+esac
