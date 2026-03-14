@@ -1,35 +1,42 @@
-# WAT Framework
+# Phantomclaw
 
-> [!NOTE]
-> For a high-level overview of the projects built on this framework (like TLDR Digest and Lobster Stream), see [PHANTOMCLAW.md](PHANTOMCLAW.md).
+> **The Agentic OS for Information and Utility.**
 
-> **WAT = Workflows · Agents · Tools**
-> Probabilistic AI handles reasoning. Deterministic code handles execution.
+Phantomclaw is an advanced suite of tools designed to bridge the gap between complex workflows and seamless user interaction. Built on the **WAT Framework**, it empowers users with automated intelligence and rich media capabilities through a unified, multi-modal interface.
 
-## Directory Layout
+## Core Features
 
-```
-.tmp/              # Temporary processing files — disposable, regenerated as needed
-tools/             # Python scripts for deterministic execution
-workflows/         # Markdown SOPs (standard operating procedures)
-_agents/           # Agent config and agent-facing workflows
-.env               # API keys (never committed — see .env.example)
-CLAUDE.md          # Agent instructions
-```
+### 🧠 Intelligence: Daily TLDR Digest
+Never miss a beat in AI and Tech. Phantomclaw automatically:
+- Fetches the latest TLDR newsletters.
+- Filters and summarizes content specifically for AI/Coding interests.
+- Delivers a clean, formatted digest to your Telegram at 8:00 AM ET.
+- *Managed via: `tools/daily_tldr_digest.py` and `tools/fetch_tldr_emails.py`*
 
-## Quickstart
+### 🎬 Media: Lobster Stream
+Your personal entertainment hub.
+- Search and stream movies and TV shows directly.
+- Interactive selection of seasons and episodes.
+- High-quality direct streaming links integration.
+- *Managed via: `tools/lobster_stream.py`*
 
-1. Copy `.env.example` → `.env` and fill in your credentials
-2. Browse `workflows/` to find the SOP for your task
-3. Ask the agent to run it
+### 🏗️ Interface: Telegram-OpenCode Bridge
+A powerful, multi-modal gateway to your workspace.
+- **Voice Support**: Transcribe and process audio commands via **Groq (Whisper)**.
+- **Vision Support**: Analyze images and video frames using local **Ollama (Qwen)** models.
+- **Persistent Sessions**: Maintain coding context across interactions.
+- **Command Control**: Handle `/watch`, `/trending`, and file uploads seamlessly.
+- *Managed via: `tools/telegram_opencode_bridge.py`*
 
-## Conventions
+## Architecture
 
-- **Tools** are standalone Python scripts (`tools/verb_noun.py`). Run them with `--help` to see args.
-- **Workflows** are Markdown SOPs (`workflows/verb_noun.md`). The agent reads these before executing.
-- **`.tmp/`** is ephemeral. Don't store anything you care about there.
-- **Deliverables** go to cloud services (Google Sheets, Slides, etc.) — not local files.
+Phantomclaw leverages the **WAT (Workflows, Agents, Tools)** architecture:
+- **Workflows**: Standardized SOPs in `workflows/`.
+- **Agents**: Intelligent coordination using models like Minimax.
+- **Tools**: Deterministic Python scripts in `tools/`.
 
-## The Self-Improvement Loop
+---
+*Phantomclaw: Automating your digital life, one workflow at a time.*
 
-Every failure → fix the tool → verify → update the workflow. The system gets stronger with each iteration.
+> [!TIP]
+> For technical details on the underlying **WAT Framework** (Workflows, Agents, Tools), see [WAT_FRAMEWORK.md](WAT_FRAMEWORK.md).
