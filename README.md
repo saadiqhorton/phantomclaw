@@ -1,4 +1,7 @@
-# dezignerdrugzcorp — WAT Framework
+# WAT Framework
+
+> [!NOTE]
+> For a high-level overview of the projects built on this framework (like TLDR Digest and Lobster Stream), see [PHANTOMCLAW.md](PHANTOMCLAW.md).
 
 > **WAT = Workflows · Agents · Tools**
 > Probabilistic AI handles reasoning. Deterministic code handles execution.
