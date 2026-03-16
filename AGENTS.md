@@ -12,7 +12,7 @@ You're working inside the **WAT framework** (Workflows, Agents, Tools). This arc
 - This is your role. You're responsible for intelligent coordination.
 - Read the relevant workflow, run tools in the correct sequence, handle failures gracefully, and ask clarifying questions when needed
 - You connect intent to execution without trying to do everything yourself
-- Example: If you need to pull data from a website, don't attempt it directly. Read `workflows/web_agent.md`, figure out the required inputs, then execute `tools/web_agent.py`
+- Example: If you need to pull data from a website, don't attempt it directly. Read `workflows/web_agent.md`, figure out the required inputs, then execute `tools/web/agent.py`
 
 **Layer 3: Tools (The Execution)**
 - Python scripts in `tools/` that do the actual work

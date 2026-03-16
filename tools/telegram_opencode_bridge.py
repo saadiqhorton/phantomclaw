@@ -13,7 +13,7 @@ import os
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 try:
-    import lobster_stream
+    from tools.lobster import lobster_stream
 except ImportError:
     lobster_stream = None
 
@@ -450,9 +450,9 @@ async def search_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # Basic input sanitization - strip control characters
     query = "".join(c for c in query if ord(c) >= 32 or c in "\n\t")
 
-    # Determine path to web_agent.py
+    # Determine path to web/agent.py
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    web_agent_path = os.path.join(script_dir, "web_agent.py")
+    web_agent_path = os.path.join(script_dir, "web", "agent.py")
 
     if not os.path.exists(web_agent_path):
         await update.message.reply_text("Web agent script not found.")
@@ -461,7 +461,7 @@ async def search_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     status_msg = await update.message.reply_text(f"🔍 Searching for: {query}...")
 
     try:
-        # Run web_agent.py with synthesis enabled
+        # Run web/agent.py with synthesis enabled
         cmd = [
             sys.executable,
             web_agent_path,

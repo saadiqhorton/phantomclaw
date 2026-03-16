@@ -18,16 +18,16 @@ This workflow fetches the latest TLDR newsletters from Gmail using `gws`, filter
 ## Manual Run
 To trigger the digest manually at any time:
 ```bash
-python3 tools/daily_tldr_digest.py
+python3 tools/tldr/daily_tldr_digest.py
 ```
 
 ## Pipeline Flow
-1. `tools/fetch_tldr_emails.py` — fetches the latest email from each newsletter type via `gws`
-2. `tools/daily_tldr_digest.py` — parses HTML, extracts articles with links, filters for AI/coding keywords, formats a rich digest
-3. `tools/tldr_digest_notifier.py` — sends the formatted digest to Telegram
+1. `tools/tldr/fetch_tldr_emails.py` — fetches the latest email from each newsletter type via `gws`
+2. `tools/tldr/daily_tldr_digest.py` — parses HTML, extracts articles with links, filters for AI/coding keywords, formats a rich digest
+3. `tools/tldr/tldr_digest_notifier.py` — sends the formatted digest to Telegram
 
 ## AI/Coding Filter Keywords
-The digest only includes articles matching keywords like: AI, Claude, OpenAI, Cursor, Copilot, Gemini, LLM, GitHub, Python, Docker, etc. The full keyword list is configurable at the top of `tools/daily_tldr_digest.py`.
+The digest only includes articles matching keywords like: AI, Claude, OpenAI, Cursor, Copilot, Gemini, LLM, GitHub, Python, Docker, etc. The full keyword list is configurable at the top of `tools/tldr/daily_tldr_digest.py`.
 
 ## Error Handling
 - If `gws` fails due to auth errors, re-run `gws auth login`

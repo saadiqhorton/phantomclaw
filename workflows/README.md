@@ -13,6 +13,6 @@ Markdown SOPs that define how to accomplish a specific objective. Each workflow 
 | Convention | Detail |
 |---|---|
 | Naming | `verb_noun.md` — e.g. `scrape_website.md`, `update_sheet.md` |
-| Tool refs | Reference tools by path: `tools/scrape_website.py` |
+| Tool refs | Reference tools by path: `tools/web/agent.py` or `tools/tldr/daily_tldr_digest.py` |
 | Evolution | Update existing workflows when you learn better methods |
 | Ownership | Don't overwrite workflows without user approval |

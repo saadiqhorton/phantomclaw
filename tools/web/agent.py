@@ -14,8 +14,8 @@ import sys
 # Add parent dir to path for imports
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from search import search_with_fallback, SearchError
-from scrape import WebPageFetcher, FetchError
+from .search import search_with_fallback, SearchError
+from .scrape import WebPageFetcher, FetchError
 
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
@@ -24,7 +24,8 @@ logger = logging.getLogger(__name__)
 
 def load_env():
     """Load environment variables from .env file."""
-    env_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), ".env")
+    # Go up 3 levels: web/ -> tools/ -> phantomclaw/ -> .env
+    env_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), ".env")
     if os.path.exists(env_path):
         with open(env_path) as f:
             for line in f:

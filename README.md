@@ -11,14 +11,14 @@ Never miss a beat in AI and Tech. Phantomclaw automatically:
 - Fetches the latest TLDR newsletters.
 - Filters and summarizes content specifically for AI/Coding interests.
 - Delivers a clean, formatted digest to your Telegram at 8:00 AM ET.
-- *Managed via: `tools/daily_tldr_digest.py` and `tools/fetch_tldr_emails.py`*
+- *Managed via: `tools/tldr/daily_tldr_digest.py` and `tools/tldr/fetch_tldr_emails.py`*
 
 ### 🎬 Media: Lobster Stream
 Your personal entertainment hub.
 - Search and stream movies and TV shows directly.
 - Interactive selection of seasons and episodes.
 - High-quality direct streaming links integration.
-- *Managed via: `tools/lobster_stream.py`*
+- *Managed via: `tools/lobster/lobster_stream.py`*
 
 ### 🏗️ Interface: Telegram-OpenCode Bridge
 A powerful, multi-modal gateway to your workspace.
@@ -34,7 +34,7 @@ Search the web and get synthesized results with sources.
 - AI-powered synthesis using OpenAI or Minimax
 - Clean output without raw HTML/JSON artifacts
 - Sources listed at bottom of response
-- *Managed via: `tools/web_agent.py`, `tools/search/`, `tools/scrape/`*
+- *Managed via: `tools/web/agent.py`, `tools/web/search/`, `tools/web/scrape/`*
 
 ## Directory Layout
 

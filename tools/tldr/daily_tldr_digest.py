@@ -16,7 +16,7 @@ from datetime import datetime
 
 # Add project root to path so we can import the notifier
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-PROJECT_ROOT = os.path.dirname(SCRIPT_DIR)
+PROJECT_ROOT = os.path.dirname(os.path.dirname(SCRIPT_DIR))
 sys.path.insert(0, SCRIPT_DIR)
 
 try:
@@ -25,7 +25,7 @@ try:
 except ImportError:
     pass
 
-from tldr_digest_notifier import send_message
+from .tldr_digest_notifier import send_message
 
 # ──────────────────────────────────────────────────────────────────────────────
 # CONFIGURATION

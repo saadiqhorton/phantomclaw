@@ -9,7 +9,7 @@
 - `synthesize` (optional): Whether to attempt AI synthesis (default: false)
 
 ## Steps
-1. Run `python tools/web_agent.py "<query>"` with optional flags:
+1. Run `python tools/web/agent.py "<query>"` with optional flags:
    - `-n <num>` for number of search results
    - `-v <num>` for number of pages to visit
    - `-s` to enable AI synthesis

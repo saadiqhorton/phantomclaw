@@ -8,7 +8,7 @@ This workflow describes the Lobster integration in the Telegram OpenCode Bridge 
 
 ## Setup & Requirements
 
-- The logic is implemented purely in Python via `tools/lobster_stream.py`. No bash dependencies or shell scripts are required.
+- The logic is implemented purely in Python via `tools/lobster/lobster_stream.py`. No bash dependencies or shell scripts are required.
 - Requires `requests` package.
 - The bot extracts Adaptive Streaming (`.m3u8`) links directly to the Telegram chat.
 - **Persistent Sessions**: Search and selection results are stored in `/tmp/lobster_sessions.json`, meaning your progress survives bot restarts.

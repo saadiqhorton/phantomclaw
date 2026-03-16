@@ -5,7 +5,7 @@
 set -e
 
 DIR="$(cd "$(dirname "$0")/.." && pwd)"
-TLDR_CRON="0 8 * * * cd $DIR && /usr/bin/python3 tools/daily_tldr_digest.py >> .tmp/tldr_cron.log 2>&1"
+TLDR_CRON="0 8 * * * cd $DIR && /usr/bin/python3 tools/tldr/daily_tldr_digest.py >> .tmp/tldr_cron.log 2>&1"
 SENTINEL_CRON="0 17 * * 5 cd $DIR && /usr/bin/python3 tools/repo_sentinel.py $DIR >> .tmp/sentinel_cron.log 2>&1"
 
 # Remove any existing entries, then add the new ones
