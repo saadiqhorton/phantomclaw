@@ -28,7 +28,7 @@ This workflow starts a persistent Telegram bot that pipes your phone's multimoda
 ## Execution
 Run the bridge script from your terminal:
 ```bash
-python tools/telegram_opencode_bridge.py
+python tools/telegram/bridge.py
 ```
 
 ## Usage

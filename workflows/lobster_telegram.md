@@ -4,7 +4,7 @@ description: How to use the Lobster Telegram Streaming Bot integration
 
 # Lobster Telegram Streaming
 
-This workflow describes the Lobster integration in the Telegram OpenCode Bridge (`tools/telegram_opencode_bridge.py`). The bot now has native, interactive search and streaming capabilities.
+This workflow describes the Lobster integration in the Telegram OpenCode Bridge (`tools/telegram/bridge.py`). The bot now has native, interactive search and streaming capabilities.
 
 ## Setup & Requirements
 

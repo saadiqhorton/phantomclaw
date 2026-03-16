@@ -6,55 +6,63 @@ Phantomclaw is an advanced suite of tools designed to bridge the gap between com
 
 ## Core Features
 
-### 🧠 Intelligence: Daily TLDR Digest
+### Daily TLDR Digest
 Never miss a beat in AI and Tech. Phantomclaw automatically:
 - Fetches the latest TLDR newsletters.
 - Filters and summarizes content specifically for AI/Coding interests.
 - Delivers a clean, formatted digest to your Telegram at 8:00 AM ET.
-- *Managed via: `tools/tldr/daily_tldr_digest.py` and `tools/tldr/fetch_tldr_emails.py`*
 
-### 🎬 Media: Lobster Stream
+### Lobster Stream
 Your personal entertainment hub.
 - Search and stream movies and TV shows directly.
 - Interactive selection of seasons and episodes.
 - High-quality direct streaming links integration.
-- *Managed via: `tools/lobster/lobster_stream.py`*
 
-### 🏗️ Interface: Telegram-OpenCode Bridge
+### Telegram-OpenCode Bridge
 A powerful, multi-modal gateway to your workspace.
-- **Voice Support**: Transcribe and process audio commands via **Groq (Whisper)**.
-- **Vision Support**: Analyze images and video frames using local **Ollama (Qwen)** models.
+- **Voice Support**: Transcribe and process audio commands via Groq (Whisper).
+- **Vision Support**: Analyze images and video frames using local Ollama (Qwen) models.
 - **Web Search**: Search the web with AI synthesis - just send a query (not /search command)
 - **Command Control**: Handle `/watch`, `/trending`, and file uploads seamlessly.
-- *Managed via: `tools/telegram_opencode_bridge.py`*
 
-### 🔍 Web Search
+### Web Search
 Search the web and get synthesized results with sources.
 - Combines search (SEARXNG/DuckDuckGo) with content scraping
 - AI-powered synthesis using OpenAI or Minimax
 - Clean output without raw HTML/JSON artifacts
-- Sources listed at bottom of response
-- *Managed via: `tools/web/agent.py`, `tools/web/search/`, `tools/web/scrape/`*
+
+### Repo Sentinel
+Monitor your repositories for new commits and activity.
+- Get notified via Telegram when repositories have new commits
+- Track multiple repositories
+
+## Quickstart
+
+1. Copy `.env.example` → `.env` and fill in your credentials
+2. Browse `workflows/` to find the SOP for your task
+3. Run the appropriate tool
 
 ## Directory Layout
 
 ```
-README.md          # Project overview (This file)
-WAT_FRAMEWORK.md   # Technical framework documentation
-tools/             # Core functionality (TLDR, Lobster, Telegram)
-workflows/         # Step-by-step agent instructions
-_agents/           # Agent-specific configurations
+phantomclaw/
+├── README.md           # Project overview (this file)
+├── ARCHITECTURE.md     # WAT framework structure and conventions
+├── AGENTS.md           # Agent operating instructions
+├── .env.example        # Environment variables template
+├── opencode.json       # OpenCode configuration
+├── tools/              # Python scripts for deterministic execution
+├── workflows/         # Markdown SOPs (standard operating procedures)
+└── tmp/                # Temporary processing files (ephemeral)
 ```
 
-## Architecture
+## Tech Stack
 
-Phantomclaw leverages the **WAT (Workflows, Agents, Tools)** architecture:
-- **Workflows**: Standardized SOPs in `workflows/`.
-- **Agents**: Intelligent coordination using models like Minimax.
-- **Tools**: Deterministic Python scripts in `tools/`.
+- **AI Models**: OpenAI, Minimax, Ollama, Groq
+- **Telegram**: python-telegram-bot for bot integration
+- **Search**: SEARXNG, DuckDuckGo
+- **Email**: gws (Gmail workaround)
 
 ---
-*Phantomclaw: Automating your digital life, one workflow at a time.*
 
-> [!TIP]
-> For technical details on the underlying **WAT Framework** (Workflows, Agents, Tools), see [WAT_FRAMEWORK.md](WAT_FRAMEWORK.md).
+*Phantomclaw: Automating your digital life, one workflow at a time.*

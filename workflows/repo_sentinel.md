@@ -6,7 +6,7 @@
 - `repo_path`: The absolute path to the local git repository.
 
 ## Steps
-1. Run `python tools/repo_sentinel.py <repo_path>`
+1. Run `python tools/repo/sentinel.py <repo_path>`
 2. The tool checks `git status` for uncommitted files.
 3. The tool checks `git log @{u}..HEAD` for commits that haven't been pushed to the remote.
 4. If issues exist, the tool autonomously sends a markdown alert directly to Telegram (using env variables).

@@ -10,9 +10,9 @@ case "${1:-start}" in
       echo "⚠️  Bridge is already running. Use: ./tools/bridge attach"
       exit 1
     fi
-    pkill -f telegram_opencode_bridge 2>/dev/null
+    pkill -f "tools/telegram/bridge" 2>/dev/null
     sleep 1
-    tmux new-session -d -s "$SESSION" "while true; do python3 '$DIR/tools/telegram_opencode_bridge.py'; echo '⚠️  Crashed. Restarting in 5s...'; sleep 5; done"
+    tmux new-session -d -s "$SESSION" "while true; do python3 '$DIR/tools/telegram/bridge.py'; echo '⚠️  Crashed. Restarting in 5s...'; sleep 5; done"
     echo "✅ Bridge started in background. Commands:"
     echo "   ./tools/bridge attach  — view live output"
     echo "   ./tools/bridge status  — check if running"
@@ -21,7 +21,7 @@ case "${1:-start}" in
     ;;
   stop)
     tmux kill-session -t "$SESSION" 2>/dev/null
-    pkill -f telegram_opencode_bridge 2>/dev/null
+    pkill -f "tools/telegram/bridge" 2>/dev/null
     echo "🛑 Bridge stopped."
     ;;
   status)

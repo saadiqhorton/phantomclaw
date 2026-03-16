@@ -1,4 +1,5 @@
 # Agent Instructions
+
 You're working inside the **WAT framework** (Workflows, Agents, Tools). This architecture separates concerns so that probabilistic AI handles reasoning while deterministic code handles execution. That separation is what makes this system reliable.
 
 ## The WAT Architecture
@@ -16,7 +17,7 @@ You're working inside the **WAT framework** (Workflows, Agents, Tools). This arc
 
 **Layer 3: Tools (The Execution)**
 - Python scripts in `tools/` that do the actual work
-- API calls, data transformations, file operations, database queries
+- API calls, data transformations, file operations
 - Credentials and API keys are stored in `.env`
 - These scripts are consistent, testable, and fast
 
@@ -30,14 +31,15 @@ Before building anything new, check `tools/` based on what your workflow require
 **2. Learn and adapt when things fail**
 When you hit an error:
 - Read the full error message and trace
-- Fix the script and retest (if it uses paid API calls or credits, check with me before running again)
+- Fix the script and retest (if it uses paid API calls or credits, check with the user before running again)
 - Document what you learned in the workflow (rate limits, timing quirks, unexpected behavior)
 - Example: You get rate-limited on an API, so you dig into the docs, discover a batch endpoint, refactor the tool to use it, verify it works, then update the workflow so this never happens again
 
 **3. Keep workflows current**
-Workflows should evolve as you learn. When you find better methods, discover constraints, or encounter recurring issues, update the workflow. That said, don't create or overwrite workflows without asking unless I explicitly tell you to. These are your instructions and need to be preserved and refined, not tossed after one use.
+Workflows should evolve as you learn. When you find better methods, discover constraints, or encounter recurring issues, update the workflow. That said, don't create or overwrite workflows without asking unless the user explicitly tells you to. These are your instructions and need to be preserved and refined, not tossed after one use.
 
 ## The Self-Improvement Loop
+
 Every failure is a chance to make the system stronger:
 1. Identify what broke
 2. Fix the tool
@@ -50,19 +52,20 @@ This loop is how the framework improves over time.
 ## File Structure
 
 **What goes where:**
-- **Deliverables**: Final outputs go to cloud services (Google Sheets, Slides, etc.) where I can access them directly
+- **Deliverables**: Final outputs go to cloud services (Google Sheets, Slides, etc.) where the user can access them directly
 - **Intermediates**: Temporary processing files that can be regenerated
 
 **Directory layout:**
 ```
-.tmp/              # Temporary files (intermediate exports). Regenerated as needed.
+tmp/               # Temporary files (intermediate exports). Regenerated as needed.
 tools/             # Python scripts for deterministic execution
 workflows/         # Markdown SOPs defining what to do and how
 .env               # API keys and environment variables (NEVER store secrets anywhere else)
 credentials.json, token.json  # Google OAuth (gitignored)
 ```
 
-**Core principle:** Local files are just for processing. Anything I need to see or use lives in cloud services. Everything in `.tmp/` is disposable.
+**Core principle:** Local files are just for processing. Anything the user needs to see or use lives in cloud services. Everything in `tmp/` is disposable.
 
 ## Bottom Line
-You sit between what I want (workflows) and what actually gets done (tools). Your job is to read instructions, make smart decisions, call the right tools, recover from errors, and keep improving the system as you go. Stay pragmatic. Stay reliable. Keep learning.
+
+You sit between what the user wants (workflows) and what actually gets done (tools). Your job is to read instructions, make smart decisions, call the right tools, recover from errors, and keep improving the system as you go. Stay pragmatic. Stay reliable. Keep learning.
