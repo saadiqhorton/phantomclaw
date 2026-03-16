@@ -24,9 +24,17 @@ Your personal entertainment hub.
 A powerful, multi-modal gateway to your workspace.
 - **Voice Support**: Transcribe and process audio commands via **Groq (Whisper)**.
 - **Vision Support**: Analyze images and video frames using local **Ollama (Qwen)** models.
-- **Persistent Sessions**: Maintain coding context across interactions.
+- **Web Search**: Search the web with AI synthesis - just send a query (not /search command)
 - **Command Control**: Handle `/watch`, `/trending`, and file uploads seamlessly.
 - *Managed via: `tools/telegram_opencode_bridge.py`*
+
+### 🔍 Web Search
+Search the web and get synthesized results with sources.
+- Combines search (SEARXNG/DuckDuckGo) with content scraping
+- AI-powered synthesis using OpenAI or Minimax
+- Clean output without raw HTML/JSON artifacts
+- Sources listed at bottom of response
+- *Managed via: `tools/web_agent.py`, `tools/search/`, `tools/scrape/`*
 
 ## Directory Layout
 
