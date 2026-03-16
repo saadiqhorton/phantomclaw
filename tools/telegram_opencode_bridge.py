@@ -4,6 +4,8 @@ import asyncio
 import subprocess
 import tempfile
 import ollama
+import json
+import logging
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, MessageHandler, CallbackQueryHandler, TypeHandler, filters, ContextTypes
 import sys
@@ -246,7 +248,10 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         if not output_text:
             output_text = "(No output returned from OpenCode)"
 
-        # Telegram limits messages to 4096 chars
+        # Sanitize FIRST to remove JSON blocks completely
+        output_text = _sanitize_opencode_output(output_text)
+
+        # THEN truncate for Telegram limit
         if len(output_text) > 4000:
             output_text = "...[Truncated]...\n" + output_text[-3900:]
 
@@ -296,6 +301,224 @@ async def recent_tv_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     status_msg = await update.message.reply_text(f"🆕 Fetching recent TV shows...")
     results = await asyncio.to_thread(lobster_stream.get_recent, "tv")
     await handle_search_results(update, context, results, status_msg)
+
+
+# --- Web Search Handler ---
+
+
+def _escape_markdown(text: str) -> str:
+    """Escape special Markdown characters for Telegram."""
+    if not text:
+        return ""
+    # Escape Telegram Markdown special characters
+    # Order matters: escape backslash first
+    special_chars = ['\\', '*', '_', '[', ']', '(', ')', '~', '`', '>', '#', '+', '-', '=', '|', '{', '}', '.', '!']
+    for char in special_chars:
+        text = text.replace(char, '\\' + char)
+    return text
+
+
+def _sanitize_opencode_output(text: str) -> str:
+    """Sanitize OpenCode CLI output - strip raw JSON, Unicode escapes, scraped content artifacts."""
+    if not text:
+        return ""
+
+    import re
+    import html
+
+    # 1. Decode Unicode escape sequences
+    text = re.sub(r'\\u([0-9a-fA-F]{4})', lambda m: chr(int(m.group(1), 16)), text)
+    text = text.replace('\u00a0', ' ')
+    text = text.replace('\u2022', '-')
+    text = text.replace('\u2019', "'")
+    text = text.replace('\u2018', "'")
+    text = text.replace('\u201c', '"')
+    text = text.replace('\u201d', '"')
+
+    # 2. Decode HTML entities
+    text = html.unescape(text)
+
+    # 2b. Remove shell prompts and command lines
+    # Examples: "> build · MiniMax-M2.5", "$ SEARXNG_BASE_URL=... python3 ..."
+    lines = text.split('\n')
+    result_lines = []
+    for line in lines:
+        stripped = line.strip()
+        # Skip shell prompts like: "> build · MiniMax-M2.5" or "> build"
+        if stripped.startswith('> ') and ('·' in stripped or len(stripped) < 50):
+            continue
+        # Skip command lines starting with $ or # that look like shell commands
+        if stripped.startswith('$ ') or stripped.startswith('# '):
+            # Only skip if it looks like a command (contains python, node, npm, etc.)
+            if any(cmd in stripped.lower() for cmd in ['python', 'node', 'npm', 'curl', 'pip', 'pip3', 'opencode', 'searxng']):
+                continue
+        result_lines.append(line)
+    text = '\n'.join(result_lines)
+
+    # 3. Extract URLs from JSON before stripping
+    urls = re.findall(r'"url":\s*"([^"]+)"', text)
+    # Also extract from markdown links [text](url)
+    md_urls = re.findall(r'\[([^\]]+)\]\(([^)]+)\)', text)
+    urls.extend([u[1] for u in md_urls])  # Get the URL part from markdown
+    # Deduplicate while preserving order
+    seen = set()
+    unique_urls = []
+    for url in urls:
+        if url not in seen and url.startswith('http'):
+            seen.add(url)
+            unique_urls.append(url)
+
+    # 4. Remove raw JSON blocks - line by line approach
+    lines = text.split('\n')
+    result_lines = []
+    skip_mode = False
+    brace_count = 0
+
+    for line in lines:
+        stripped = line.strip()
+
+        # Detect JSON start - any line starting with { or [
+        if not skip_mode and (stripped.startswith('{') or stripped.startswith('[')):
+            skip_mode = True
+            brace_count = stripped.count('{') - stripped.count('}')
+            brace_count += stripped.count('[') - stripped.count(']')
+            # If this single line is the whole JSON, don't skip
+            if brace_count == 0 and stripped.endswith(('}', ']')):
+                skip_mode = False
+                result_lines.append(line)
+            continue
+
+        # Track braces to find end of JSON block
+        if skip_mode:
+            brace_count += stripped.count('{') - stripped.count('}')
+            brace_count += stripped.count('[') - stripped.count(']')
+            if brace_count <= 0 and stripped in ['}', ']', '},', '],']:
+                skip_mode = False
+            continue
+
+        result_lines.append(line)
+
+    text = '\n'.join(result_lines)
+
+    # 4. Strip common scraped page garbage
+    garbage = [
+        'About Press Copyright Contact us Creators',
+        '© 2026 Google LLC',
+        'Advertise Developers Terms Privacy Policy & Safety',
+        'ZonePlayerLeague',
+        'NBA Playoffs Stats Stats Per Game',
+        'Career comparison Season by season',
+    ]
+    for g in garbage:
+        text = text.replace(g, '')
+
+    # Remove stat patterns
+    text = re.sub(r'RA\d+\.?\d*%', '', text)
+    text = re.sub(r'PAINT\d+\.?\d*%', '', text)
+    text = re.sub(r'MID\d+\.?\d*%', '', text)
+    text = re.sub(r'LC\d+\.?\d*%', '', text)
+    text = re.sub(r'RC\d+\.?\d*%', '', text)
+    text = re.sub(r'ATB\d+\.?\d*%', '', text)
+
+    # 5. Remove residual HTML tags
+    text = re.sub(r'<[^>]+>', '', text)
+
+    # 6. Clean up
+    text = re.sub(r'\n{3,}', '\n\n', text)
+
+    # 7. Append sources if we found any URLs
+    if unique_urls:
+        text += "\n\n---\n**Sources:**\n"
+        for i, url in enumerate(unique_urls[:5], 1):  # Limit to 5 sources
+            text += f"{i}. {url}\n"
+
+    return text.strip()
+
+
+async def search_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Handler for the /search command - web search with AI synthesis."""
+    user_id = str(update.effective_user.id)
+    if ALLOWED_USER_ID and user_id != ALLOWED_USER_ID:
+        await update.message.reply_text("Unauthorized user.")
+        return
+
+    query = " ".join(context.args)
+    if not query:
+        await update.message.reply_text("Please provide a search query: /search python tutorials")
+        return
+
+    # Basic input sanitization - strip control characters
+    query = "".join(c for c in query if ord(c) >= 32 or c in "\n\t")
+
+    # Determine path to web_agent.py
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    web_agent_path = os.path.join(script_dir, "web_agent.py")
+
+    if not os.path.exists(web_agent_path):
+        await update.message.reply_text("Web agent script not found.")
+        return
+
+    status_msg = await update.message.reply_text(f"🔍 Searching for: {query}...")
+
+    try:
+        # Run web_agent.py with synthesis enabled
+        cmd = [
+            sys.executable,
+            web_agent_path,
+            query,
+            "-n", "5",
+            "-v", "3",
+            "-s",  # Enable synthesis
+            "-f", "json"
+        ]
+
+        process = await asyncio.create_subprocess_exec(
+            *cmd,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE
+        )
+
+        stdout, stderr = await process.communicate()
+
+        if process.returncode != 0:
+            await status_msg.edit_text(f"❌ Search failed: {stderr.decode('utf-8', errors='replace')}")
+            return
+
+        # Parse JSON output
+        try:
+            result = json.loads(stdout.decode("utf-8"))
+        except json.JSONDecodeError:
+            await status_msg.edit_text("❌ Failed to parse search results.")
+            return
+
+        # Format output for Telegram
+        if result.get("summary"):
+            response = f"🔍 *Search: {query}*\n\n"
+            response += f"_Source: {result.get('search_provider', 'unknown')}_\n\n"
+            response += f"📝 *Summary:*\n{_escape_markdown(result['summary'])}\n\n"
+            response += f"📄 *Top Results:*\n"
+            for i, r in enumerate(result.get("search_results", [])[:3], 1):
+                response += f"{i}. [{_escape_markdown(r['title'])}]({r['url']})\n"
+        else:
+            response = f"🔍 *Results for: {query}*\n\n"
+            for i, r in enumerate(result.get("search_results", [])[:5], 1):
+                response += f"{i}. *{_escape_markdown(r['title'])}*\n{r['url']}\n"
+                if r.get('snippet'):
+                    response += f"_{_escape_markdown(r['snippet'][:100])}..._\n"
+                response += "\n"
+
+        # Telegram message length limit
+        if len(response) > 4000:
+            response = response[:3900] + "...\n_(truncated)_"
+
+        await status_msg.edit_text(response, parse_mode='Markdown', disable_web_page_preview=True)
+
+    except Exception as e:
+        logger.exception("Search error")
+        await status_msg.edit_text(f"❌ Search error: {str(e)}")
+
+
+# --- End Web Search Handler ---
 
 async def handle_search_results(update, context, results, status_msg):
     if not results:
@@ -434,6 +657,7 @@ def main():
     application.add_handler(CommandHandler("trending", trending_command))
     application.add_handler(CommandHandler("recent_movies", recent_movies_command))
     application.add_handler(CommandHandler("recent_tv", recent_tv_command))
+    application.add_handler(CommandHandler("search", search_command))
     application.add_handler(TypeHandler(Update, debug_update_logger), group=-1)
     application.add_handler(CallbackQueryHandler(button_handler))
     application.add_error_handler(error_handler)
